@@ -1,19 +1,8 @@
-import '~/styles/test.styles.scss';
-import '~/styles/test.fonts.scss';
+import '~/styles/styles.scss';
 
-import { titleText } from './js/test';
-import webpackLogo from '~/img/webpack-icon.svg';
+import { IntegralVideoPlayer } from './js/integralVideoPlayer';
+import testVideo from './videos/video.mp4';
 
 window.onload = () => {
-  const rootNode = document.getElementById('root');
-
-  const title = document.createElement('div');
-  title.setAttribute('class', 'title');
-  title.innerText = titleText();
-
-  const logo = document.createElement('img');
-  logo.setAttribute('class', 'webpack-logo');
-  logo.src = webpackLogo;
-
-  rootNode.append(title, logo);
+  (new IntegralVideoPlayer(testVideo, document.getElementById('root')));
 };

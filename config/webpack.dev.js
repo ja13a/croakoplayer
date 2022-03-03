@@ -57,6 +57,10 @@ module.exports = {
         ]
       },
       {
+        test: /\.mp4$/,
+        type: 'asset/resource'
+      },
+      {
         test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
         type: 'asset/resource'
       },
@@ -69,7 +73,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: paths.src + '/template.html',
-      title: 'Webpack 5 & Vanilla JS boilerplate',
+      title: 'Intergral Video Player',
       favicon: paths.src + '/img/favicon.svg',
       filename: 'index.html'
     }),

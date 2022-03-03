@@ -1,1 +1,0 @@
-export const titleText = () => 'Webpack 5 & Vanilla JS boilerplate';
