@@ -1,34 +1,34 @@
-export class IntegralVideoPlayer {
-  constructor(videoSource, rootNode) {
-    this.videoSource = videoSource;
-    this.rootNode = rootNode;
+import '~/styles/styles.scss';
 
-    this.videoPlayer();
+window.onload = () => document
+  .querySelectorAll('video[data-type=croakoplayer]')
+  .forEach(video => new Croakoplayer(video));
+
+class Croakoplayer {
+  constructor(videoNode) {
+    this.videoPlayer(videoNode);
   }
 
   player = null;
   isChangingTime = false;
   lastVolumeValue = 1;
 
-  videoPlayer() {
+  videoPlayer(videoNode) {
     const playerWrapper = document.createElement('div');
     playerWrapper.setAttribute('class', 'integral-video-player');
 
-    const video = document.createElement('video');
-    video.setAttribute('src', this.videoSource);
-    video.setAttribute('class', 'integeral-video-player__player');
-    video.currentTime = 0;
+    videoNode.classList.add('integeral-video-player__player');
+    videoNode.currentTime = 0;
+    videoNode.addEventListener('click', (e) => e.target.paused ? this.player.play() : this.player.pause());
 
-    video.addEventListener('click', (e) => e.target.paused ? this.player.play() : this.player.pause());
+    this.player = videoNode;
 
-    this.player = video;
-
-    playerWrapper.append(video);
-    playerWrapper.append(this.controls());
-    this.rootNode.append(playerWrapper);
+    videoNode.parentNode.insertBefore(playerWrapper, videoNode);
+    playerWrapper.append(videoNode);
+    playerWrapper.append(this.controls(videoNode.dataset.allowDownload));
   }
 
-  controls() {
+  controls(allowDownload = false) {
     const controlsWrapper = document.createElement('div');
     controlsWrapper.classList.add('integral-video-player__controls-wrapper');
 
@@ -36,6 +36,8 @@ export class IntegralVideoPlayer {
     controlsWrapper.append(this.timeRange());
     controlsWrapper.append(this.playerTime());
     controlsWrapper.append(this.volumeRange());
+    controlsWrapper.append(this.playbackSpeedButton());
+    allowDownload && controlsWrapper.append(this.downloadButton());
     controlsWrapper.append(this.fullscreenButton());
 
     return controlsWrapper;
@@ -94,6 +96,10 @@ export class IntegralVideoPlayer {
       e.preventDefault();
 
       !this.isChangingTime && (timeRange.value = e.target.currentTime);
+    });
+
+    this.player.addEventListener('ratechange', (e) => {
+      timeRange.setAttribute('max', Math.floor(e.target.duration));
     });
 
     timeRange.addEventListener('input', () => {
@@ -182,6 +188,66 @@ export class IntegralVideoPlayer {
     volumeWrapper.append(volumeRange);
 
     return volumeWrapper;
+  }
+
+  playbackSpeedButton() {
+    const playbackSpeedButton = document.createElement('button');
+    playbackSpeedButton.setAttribute('class', 'integral-video-player__button');
+
+    const playbackSpeedIcon = document.createElement('div');
+    playbackSpeedIcon.setAttribute('class', 'integral-video-player__icon playback-speed-icon');
+
+    const playbackSpeedTooltip = document.createElement('div');
+    playbackSpeedTooltip.setAttribute('class', 'integral-video-player__tooltip');
+
+    const playbackSpeeds = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+    playbackSpeeds.forEach(speed => playbackSpeedTooltip.append(this.playbackSpeedOption(speed)));
+
+    playbackSpeedButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      playbackSpeedTooltip.classList.toggle('integral-video-player__tooltip_open');
+    });
+
+    playbackSpeedButton.append(playbackSpeedTooltip);
+    playbackSpeedButton.append(playbackSpeedIcon);
+
+    return playbackSpeedButton;
+  }
+
+  playbackSpeedOption(speed) {
+    const playbackSpeedOption = document.createElement('button');
+    playbackSpeedOption.setAttribute('class', 'integral-video-player__playback-speed-option');
+    playbackSpeedOption.dataset.speed = speed;
+    playbackSpeedOption.innerText = speed + 'x';
+
+    this.player.addEventListener('ratechange', (e) => {
+      (playbackSpeedOption.dataset.speed == e.target.playbackRate)
+        ? playbackSpeedOption.setAttribute('class',
+          'integral-video-player__playback-speed-option integral-video-player__playback-speed-option_selected')
+        : playbackSpeedOption.setAttribute('class',
+          'integral-video-player__playback-speed-option');
+    });
+
+    playbackSpeedOption.addEventListener('click',() => {
+      playbackSpeedOption.classList.add('integral-video-player__playback-speed-option_selected');
+      this.player.playbackRate = speed;
+    });
+
+    return playbackSpeedOption;
+  }
+
+  downloadButton() {
+    const downloadButton = document.createElement('a');
+    downloadButton.setAttribute('class', 'integral-video-player__button');
+    downloadButton.setAttribute('download', '');
+    downloadButton.setAttribute('href', this.player.src ? this.player.src : this.player.querySelector('source').src);
+
+    const downloadIcon = document.createElement('div');
+    downloadIcon.setAttribute('class', 'integral-video-player__icon download-icon');
+
+    downloadButton.append(downloadIcon);
+
+    return downloadButton;
   }
 
   fullscreenButton() {

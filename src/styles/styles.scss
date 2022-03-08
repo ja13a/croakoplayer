@@ -6,8 +6,32 @@ $transition-time-main: 0.2s;
 $icon-color-main : white;
 $not-filled-color: rgba(255, 255, 255, 0.3);
 
-body {
-  background-color: rgb(37, 37, 37);
+$thumb-size: 13px;
+$range-track-height: 5px;
+$range-border-radius: 50px;
+
+@mixin track() {
+  height: $range-track-height;
+  border-radius: $range-border-radius;
+  background: $not-filled-color;
+  cursor: pointer;
+}
+
+@mixin thumb() {
+  width: $thumb-size;
+  height: $thumb-size;
+  border: none;
+  border-radius: $range-border-radius;
+  background: $color-main;
+  transition: 0.1s ease-in-out;
+  cursor: grab;
+}
+
+@mixin progress() {
+  height:$range-track-height;
+  border-radius: $range-border-radius;
+  background: $color-main;
+  cursor: pointer;
 }
 
 .integral-video-player {
@@ -21,6 +45,8 @@ body {
   height: 405px;
 
   margin: auto;
+
+  font-family: 'Inconsolata', sans-serif;
 
   &__controls-wrapper {
     position: absolute;
@@ -44,11 +70,11 @@ body {
     opacity: 1;
   }
 
-  // &__player {
-    
-  // }
-
   &__button {
+    position: relative;
+    box-sizing: border-box;
+    display: block;
+
     width: 32px;
     height: 32px;
 
@@ -57,9 +83,29 @@ body {
     border-radius: $border-radius-main;
     background-color: transparent;
     transition: $transition-time-main background-color ease-in-out;
+    cursor: pointer;
 
     &:hover {
       background-color: $color-main;
+    }
+  }
+
+  &__tooltip {
+    position: absolute;
+    bottom: 40px;
+    left: -87px;
+    z-index: 1;
+    display: flex;
+    visibility: hidden;
+    flex-direction: column;
+    width: 120px;
+    color: #ffffff;
+    text-align: center;
+    border-radius: $border-radius-main;
+    background-color: rgba($color-main, 0.8);
+
+    &_open {
+      visibility: visible;
     }
   }
 
@@ -71,53 +117,57 @@ body {
   }
 
   &__range {
+    position: relative;
     flex-grow: 1;
+    overflow: hidden;
     color: $color-main;
     border: none;
+    border-radius: $range-border-radius;
     outline: none;
-    background-color: transparent;
+    background: transparent;
     transition: all 0.05s ease-in;
     -webkit-appearance: none;
 
     &::-webkit-slider-runnable-track {
-      height: 5px;
-      border-radius: 50px;
-      background-color: $not-filled-color;
-      cursor: pointer;
+      @include track();
+      background: $not-filled-color;
+      -webkit-appearance: none;
     }
 
     &::-webkit-slider-thumb {
+      @include thumb();
+      width: 0;
+      box-shadow: -100vw 0 0 100vw $color-main;
       -webkit-appearance: none;
-      width: 13px;
-      height: 13px;
-      margin-top: -3.5px;
-      border: none;
-      border-radius: 40px;
-      background-color: $icon-color-main;
       cursor: pointer;
     }
 
     &::-moz-range-track {
-      height: 5px;
-      border-radius: 50px;
-      background: $not-filled-color;
-      cursor: pointer;
+      @include track();
     }
 
     &::-moz-range-thumb {
-      width: 13px;
-      height: 13px;
-      border: none;
-      border-radius: 50px;
-      background: $icon-color-main;
-      transition: 0.1s ease-in-out;
-      cursor: pointer;
+      @include thumb();
     }
 
     &::-moz-range-progress {
-      height: 5px;
-      border-radius: 50px;
-      background: $color-main;
+      @include progress();
+    }
+
+    &::-ms-track {
+      @include track();
+    }
+
+    &::-ms-thumb {
+      @include thumb();
+    }
+
+    &::-ms-fill-lower {
+      @include progress();
+    }
+
+    &::-ms-fill-upper {
+      background-color: $not-filled-color;
     }
   }
 
@@ -136,11 +186,32 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 85px;
-    padding-bottom: 1px;
+    min-width: 82px;
+    margin: 0 2px;
     color: white;
-    font-family: 'Quicksand', sans-serif;
+    font-family: inherit;
     font-size: 14px;
+  }
+
+  &__playback-speed-option {
+    padding: 5px 0;
+    color: white;
+    font-family: 'Inconsolata', sans-serif;
+    border: none;
+    border-radius: 0px;
+    background-color: transparent;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &:last-child {
+      border-radius: 0 0 $border-radius-main $border-radius-main;
+    }
+
+    &_selected {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
   }
 }
 
@@ -181,4 +252,17 @@ body {
 
 .compress-fullscreen-icon {
   mask: url('../img/svg/compress-solid.svg') no-repeat;
+}
+
+.playback-speed-icon {
+  margin-left: 1px;
+  mask: url('../img/svg/stopwatch-solid.svg') no-repeat;
+}
+
+.download-icon {
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  margin-left: 2px;
+  mask: url('../img/svg/download-solid.svg');
 }

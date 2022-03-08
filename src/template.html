@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= htmlWebpackPlugin.options.title %></title>
+  <title>Croakoplayer</title>
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <video data-type="croakoplayer" data-allow-download=true>
+      <source src="./videos/video.mp4" type="video/mp4">
+    </video>
+  </div>
 </body>
 </html>

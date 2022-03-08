@@ -26,6 +26,14 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+          }
+        ],
+      },
+      {
         test: /\.js$/,
         exclude: '/node_modules',
         loader: 'babel-loader'
@@ -73,7 +81,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: paths.src + '/template.html',
-      title: 'Intergral Video Player',
+      title: 'Croakoplayer',
       favicon: paths.src + '/img/favicon.svg',
       filename: 'index.html'
     }),
