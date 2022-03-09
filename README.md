@@ -1,2 +1,2 @@
 # Croakoplayer 
-example deployment: https://ja13a.github.io/integral-videoplayer/
+example deployment: https://ja13a.github.io/croakoplayer/
