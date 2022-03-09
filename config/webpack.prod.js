@@ -19,6 +19,14 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+          }
+        ],
+      },
+      {
         test: /\.js$/,
         exclude: '/node_modules',
         loader: 'babel-loader'
@@ -48,6 +56,10 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.mp4$/,
+        type: 'asset/resource'
       },
       {
         test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
