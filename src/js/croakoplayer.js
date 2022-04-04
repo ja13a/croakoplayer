@@ -1,4 +1,5 @@
-import '~/styles/styles.scss';
+import '../styles/styles.scss';
+import '../styles/fonts.scss';
 
 window.onload = () => document
   .querySelectorAll('video[data-type=croakoplayer]')
@@ -26,6 +27,7 @@ class Croakoplayer {
     videoNode.parentNode.insertBefore(playerWrapper, videoNode);
     playerWrapper.append(videoNode);
     playerWrapper.append(this.controls(videoNode.dataset.allowDownload));
+    playerWrapper.append(this.fullScreenPlayButton());
   }
 
   controls(allowDownload = false) {
@@ -43,6 +45,35 @@ class Croakoplayer {
     return controlsWrapper;
   }
 
+  fullScreenPlayButton() {
+    const fullScreenPlayButtonWrapper = document.createElement('div');
+    fullScreenPlayButtonWrapper.setAttribute('class', 'integral-video-player__fullscreen-play-pause-wrapper');
+
+    fullScreenPlayButtonWrapper.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.togglePlay();
+    });
+
+    const fullScreenPlayButton = document.createElement('button');
+    fullScreenPlayButton.setAttribute('class', 'integral-video-player__fullscreen-play-button');
+
+    this.player.addEventListener('pause', () => {
+      fullScreenPlayButton.classList.toggle('integral-video-player__fullscreen-play-button_hidden');
+    });
+
+    this.player.addEventListener('play', () => {
+      fullScreenPlayButton.classList.toggle('integral-video-player__fullscreen-play-button_hidden');
+    });
+
+    const playIcon = document.createElement('div');
+    playIcon.setAttribute('class', 'integral-video-player__icon fullscreen-play-icon');
+    fullScreenPlayButton.append(playIcon);
+
+    fullScreenPlayButtonWrapper.append(fullScreenPlayButton);
+
+    return fullScreenPlayButtonWrapper;
+  }
+
   playPauseButton() {
     const playPauseButton = document.createElement('button');
     playPauseButton.setAttribute('class', 'integral-video-player__button');
@@ -53,7 +84,6 @@ class Croakoplayer {
 
     this.player.addEventListener('ended', (e) => {
       e.preventDefault();
-
       playIconElement.setAttribute('class', 'integral-video-player__icon replay-icon');
     });
 
@@ -68,7 +98,7 @@ class Croakoplayer {
     playPauseButton.addEventListener('click', (e) => {
       e.preventDefault();
 
-      this.player.paused ? this.player.play() : this.player.pause();
+      this.togglePlay();
       playIconElement.setAttribute(
         'class',
         `integral-video-player__icon ${this.player.paused ? 'play-icon' : 'pause-icon'}`
@@ -294,5 +324,9 @@ class Croakoplayer {
     fullscreenButton.append(fullscreenIcon);
 
     return fullscreenButton;
+  }
+
+  togglePlay() {
+    this.player.paused ? this.player.play() : this.player.pause();
   }
 }

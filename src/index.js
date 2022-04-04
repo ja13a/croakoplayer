@@ -1,3 +1,3 @@
-import * as smth from './js/integralVideoPlayer';
+import * as smth from './js/croakoplayer';
 
 smth;
